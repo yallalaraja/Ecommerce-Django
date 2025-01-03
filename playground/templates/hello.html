@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Django E-commerce Application </title>
+</head>
+<ul>
+    <h1> Hello This is Django introduction </h1>
+     {% if single_product %}
+        <p>{{single_product.title}}</p>
+     {% endif %}
+
+     <ul>
+        {% if products %}
+            {% for prod in products %}
+                <li>{{prod.title}} - {{prod.description}} - {{prod.collection.title}}</li>
+                <li>{{prod.title}}</li>
+                <li> id : {{prod.new_id}}</li>
+            {% endfor %}
+        {% endif %}
+    </ul>
+    
+    
+    <!-- <ul> 
+         {% if orders %}
+            {% for order in orders %} -->
+                <!-- <li>{{prod.title}} - {{prod.description}} - {{prod.collection.title}} </li> -->
+                <!-- <li>{{prod.title}}</li>  -->
+                 <!-- <li>{{order.customer.first_name}} - {{order.payment_status}}</li>
+            {% endfor %}
+        {% endif %} -->
+    <!-- </ul> -->
+
+        <!-- <ul>
+            {% for customer in customers %}
+                <li>{{customer.first_name}} - {{customer.last_name}}</li>
+            {% endfor %}
+        </ul>
+        {{order_count}} -->
+     
+</body>
+</html>
