@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'playground',
     'store',
+    'likes',
     'tags',
     'core' 
 ]
