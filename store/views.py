@@ -14,7 +14,7 @@ from rest_framework.response import Response
 from .models import Product,Collection,Review,Cart,CartItem
 from .filters import ProductFilter
 from .pagination import ProductPagination
-from .serializers import ProductSerializer,CollectionSerializer,ReviewSerializer,CartSerializer,CartItemSerializer
+from .serializers import ProductSerializer,CollectionSerializer,ReviewSerializer,CartSerializer,CartItemSerializer,AddCartItemSerializer,UpdateCartItemSerializer
 
 #Class Based Views 
 # ---------------- class based api_views for product model ---------------- #
@@ -29,15 +29,26 @@ class ReviewViewSet(ModelViewSet):
     def get_serializer_context(self):
         return {'product_id': self.kwargs['product_pk']}
 
-class CartViewSet(CreateModelMixin,RetrieveModelMixin,DestroyModelMixin,GenericViewSet):
+class CartViewSet(CreateModelMixin,RetrieveModelMixin,DestroyModelMixin,ListModelMixin,GenericViewSet):
     queryset = Cart.objects.prefetch_related('items__product').all()
     serializer_class = CartSerializer
 
 class CartItemViewSet(ModelViewSet):
-    serializer_class = CartItemSerializer
+    http_method_names = ['get','post','patch','delete']
+    def get_serializer_class(self):
+        # If we are updating quantity then we use the AddcartItem serialzer
+        if self.request.method == "POST":
+            return AddCartItemSerializer 
+        elif self.request.method == "PATCH":
+            return UpdateCartItemSerializer
+        return CartItemSerializer
+
+    def get_serializer_context(self):
+        return {'cart_id':self.kwargs['cart_pk']}
 
     def get_queryset(self):
         return CartItem.objects.filter(cart_id=self.kwargs['cart_pk']).select_related('product')
+
 
 class ProductViewSet(ModelViewSet):
     serializer_class = ProductSerializer
