@@ -98,7 +98,6 @@ class Order(models.Model):
             ('cancel_order','Can cancel Order')
         ]
 
-
 # Cart model
 class Cart(models.Model):
     id = models.UUIDField(primary_key=True,default=uuid4)
