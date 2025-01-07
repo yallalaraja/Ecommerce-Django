@@ -16,12 +16,14 @@ Including another URLconf
 """
 from django.urls import include, path
 from django.contrib import admin
+from rest_framework_simplejwt import views as jwt_views
 from debug_toolbar.toolbar import debug_toolbar_urls
 
 urlpatterns = [
     # ... the rest of your URLconf goes here ...
     path('admin/',admin.site.urls),
     path('auth/',include('djoser.urls')),
+    path('auth/',include('djoser.urls.jwt')),
     path('playground/',include('playground.urls')),
     path('store/',include('store.urls')),
 ] + debug_toolbar_urls()

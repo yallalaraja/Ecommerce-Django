@@ -4,17 +4,17 @@ from django_filters.rest_framework import DjangoFilterBackend,FilterSet
 from django.db.models import Count
 from rest_framework import status
 from rest_framework.generics import ListCreateAPIView,RetrieveUpdateDestroyAPIView
-from rest_framework.mixins import ListModelMixin,CreateModelMixin,RetrieveModelMixin,DestroyModelMixin
+from rest_framework.mixins import ListModelMixin,CreateModelMixin,RetrieveModelMixin,DestroyModelMixin,UpdateModelMixin
 from rest_framework.views import APIView
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.viewsets import ModelViewSet,GenericViewSet
 from rest_framework.decorators import api_view
 from rest_framework.filters import SearchFilter,OrderingFilter
 from rest_framework.response import Response
-from .models import Product,Collection,Review,Cart,CartItem
+from .models import Product,Collection,Review,Cart,CartItem,Customer
 from .filters import ProductFilter
 from .pagination import ProductPagination
-from .serializers import ProductSerializer,CollectionSerializer,ReviewSerializer,CartSerializer,CartItemSerializer,AddCartItemSerializer,UpdateCartItemSerializer
+from .serializers import ProductSerializer,CollectionSerializer,ReviewSerializer,CartSerializer,CartItemSerializer,AddCartItemSerializer,UpdateCartItemSerializer,CustomerSerializer
 
 #Class Based Views 
 # ---------------- class based api_views for product model ---------------- #
@@ -28,6 +28,10 @@ class ReviewViewSet(ModelViewSet):
 
     def get_serializer_context(self):
         return {'product_id': self.kwargs['product_pk']}
+
+class CustomerViewSet(CreateModelMixin,RetrieveModelMixin,UpdateModelMixin,GenericViewSet):
+    queryset = Customer.objects.all()
+    serializer_class = CustomerSerializer
 
 class CartViewSet(CreateModelMixin,RetrieveModelMixin,DestroyModelMixin,ListModelMixin,GenericViewSet):
     queryset = Cart.objects.prefetch_related('items__product').all()
@@ -282,6 +286,4 @@ def collection_detail(request,pk):
             return Response({'error':'collection is associated with one or more products'},status=status.HTTP_405_METHOD_NOT_ALLOWED)
         collection.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
 
