@@ -151,15 +151,18 @@ REST_FRAMEWORK = {
     )
 }
 
+# https://django-rest-framework-simplejwt.readthedocs.io/en/latest/settings.html#access-token-lifetime
 SIMPLE_JWT = {
-   'AUTH_HEADER_TYPES': ('JWT',),
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
-    "REFRESH_TOKEN_LIFETIME": timedelta(minutes=5),
+   'AUTH_HEADER_TYPES': ('JWT'),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
 }
 
+# https://djoser.readthedocs.io/en/latest/settings.html
 DJOSER = {
     'SERIALIZERS':{
-        'user_create':'core.serializers.UserCreateSerializer'
+        'user_create':'core.serializers.UserCreateSerializer',
+        'current_user':'core.serializers.UserSerializer'
     }
 }
 
