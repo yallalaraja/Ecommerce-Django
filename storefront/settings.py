@@ -150,4 +150,10 @@ REST_FRAMEWORK = {
     )
 }
 
+DJOSER = {
+    'SERIALIZERS':{
+        'user_create':'core.serializers.UserCreateSerializer'
+    }
+}
+
 AUTH_USER_MODEL = 'core.User'
