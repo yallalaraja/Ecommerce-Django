@@ -7,7 +7,7 @@ from rest_framework.generics import ListCreateAPIView,RetrieveUpdateDestroyAPIVi
 from rest_framework.mixins import ListModelMixin,CreateModelMixin,RetrieveModelMixin,DestroyModelMixin,UpdateModelMixin
 from rest_framework.views import APIView
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import IsAuthenticated,AllowAny,IsAdminUser
+from rest_framework.permissions import IsAuthenticated,AllowAny,IsAdminUser,DjangoModelPermissions,DjangoModelPermissionsOrAnonReadOnly
 from rest_framework.viewsets import ModelViewSet,GenericViewSet
 from rest_framework.decorators import api_view,action
 from rest_framework.filters import SearchFilter,OrderingFilter
@@ -16,7 +16,7 @@ from .models import Product,Collection,Review,Cart,CartItem,Customer
 from .filters import ProductFilter
 from .pagination import ProductPagination
 from .serializers import ProductSerializer,CollectionSerializer,ReviewSerializer,CartSerializer,CartItemSerializer,AddCartItemSerializer,UpdateCartItemSerializer,CustomerSerializer
-from .permissions import IsAdminOrReadOnly
+from .permissions import IsAdminOrReadOnly,FullDjangoModelPermissions
 
 #Class Based Views 
 # ---------------- class based api_views for product model ---------------- #
@@ -34,6 +34,8 @@ class ReviewViewSet(ModelViewSet):
 class CustomerViewSet(ModelViewSet):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
+    permission_classes = [FullDjangoModelPermissions]
+    permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
     permission_classes = [IsAdminUser]
 
     def get_permissions(self):
