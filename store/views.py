@@ -16,7 +16,7 @@ from .models import Product,Collection,Review,Cart,CartItem,Customer
 from .filters import ProductFilter
 from .pagination import ProductPagination
 from .serializers import ProductSerializer,CollectionSerializer,ReviewSerializer,CartSerializer,CartItemSerializer,AddCartItemSerializer,UpdateCartItemSerializer,CustomerSerializer
-from .permissions import IsAdminOrReadOnly,FullDjangoModelPermissions
+from .permissions import IsAdminOrReadOnly,FullDjangoModelPermissions,ViewCustomerHistoryPermission
 
 #Class Based Views 
 # ---------------- class based api_views for product model ---------------- #
@@ -34,9 +34,11 @@ class ReviewViewSet(ModelViewSet):
 class CustomerViewSet(ModelViewSet):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
-    permission_classes = [FullDjangoModelPermissions]
-    permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
     permission_classes = [IsAdminUser]
+
+    @action(detail=True,permission_classes=[ViewCustomerHistoryPermission])
+    def history(self,request,pk):
+        return Response('ok')
 
     def get_permissions(self):
         if self.request.method == 'GET':
