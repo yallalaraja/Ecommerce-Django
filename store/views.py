@@ -7,7 +7,7 @@ from rest_framework.generics import ListCreateAPIView,RetrieveUpdateDestroyAPIVi
 from rest_framework.mixins import ListModelMixin,CreateModelMixin,RetrieveModelMixin,DestroyModelMixin,UpdateModelMixin
 from rest_framework.views import APIView
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import IsAuthenticated,AllowAny
+from rest_framework.permissions import IsAuthenticated,AllowAny,IsAdminUser
 from rest_framework.viewsets import ModelViewSet,GenericViewSet
 from rest_framework.decorators import api_view,action
 from rest_framework.filters import SearchFilter,OrderingFilter
@@ -16,6 +16,7 @@ from .models import Product,Collection,Review,Cart,CartItem,Customer
 from .filters import ProductFilter
 from .pagination import ProductPagination
 from .serializers import ProductSerializer,CollectionSerializer,ReviewSerializer,CartSerializer,CartItemSerializer,AddCartItemSerializer,UpdateCartItemSerializer,CustomerSerializer
+from .permissions import IsAdminOrReadOnly
 
 #Class Based Views 
 # ---------------- class based api_views for product model ---------------- #
@@ -30,17 +31,17 @@ class ReviewViewSet(ModelViewSet):
     def get_serializer_context(self):
         return {'product_id': self.kwargs['product_pk']}
 
-class CustomerViewSet(CreateModelMixin,RetrieveModelMixin,UpdateModelMixin,GenericViewSet):
+class CustomerViewSet(ModelViewSet):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminUser]
 
     def get_permissions(self):
         if self.request.method == 'GET':
             return [AllowAny()]
         return [IsAuthenticated()]
 
-    @action(detail=False,methods=['GET','PUT'])
+    @action(detail=False,methods=['GET','PUT'],permission_classes=[IsAuthenticated])
     def me(self,request):
         (customer,created) = Customer.objects.get_or_create(user_id=request.user.id)
         if request.method == 'GET':
@@ -80,6 +81,7 @@ class ProductViewSet(ModelViewSet):
     filterset_class = ProductFilter
     search_fields = ['title','description']
     ordering_fields = ['unit_price','last_update']
+    permission_classes = [IsAdminOrReadOnly]
 
     pagination_class = ProductPagination
 
