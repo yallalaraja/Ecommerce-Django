@@ -12,10 +12,10 @@ from rest_framework.viewsets import ModelViewSet,GenericViewSet
 from rest_framework.decorators import api_view,action
 from rest_framework.filters import SearchFilter,OrderingFilter
 from rest_framework.response import Response
-from .models import Product,Collection,Review,Cart,CartItem,Customer
+from .models import Product,Collection,Review,Cart,CartItem,Customer,Order
 from .filters import ProductFilter
 from .pagination import ProductPagination
-from .serializers import ProductSerializer,CollectionSerializer,ReviewSerializer,CartSerializer,CartItemSerializer,AddCartItemSerializer,UpdateCartItemSerializer,CustomerSerializer
+from .serializers import ProductSerializer,CollectionSerializer,ReviewSerializer,CartSerializer,CartItemSerializer,AddCartItemSerializer,UpdateCartItemSerializer,CustomerSerializer,OrderSerializer
 from .permissions import IsAdminOrReadOnly,FullDjangoModelPermissions,ViewCustomerHistoryPermission
 
 #Class Based Views 
@@ -30,6 +30,10 @@ class ReviewViewSet(ModelViewSet):
 
     def get_serializer_context(self):
         return {'product_id': self.kwargs['product_pk']}
+
+class OrderViewSet(ModelViewSet):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
 
 class CustomerViewSet(ModelViewSet):
     queryset = Customer.objects.all()
