@@ -15,7 +15,7 @@ from rest_framework.response import Response
 from .models import Product,Collection,Review,Cart,CartItem,Customer,Order
 from .filters import ProductFilter
 from .pagination import ProductPagination
-from .serializers import ProductSerializer,CollectionSerializer,ReviewSerializer,CartSerializer,CartItemSerializer,AddCartItemSerializer,UpdateCartItemSerializer,CustomerSerializer,OrderSerializer
+from .serializers import ProductSerializer,CollectionSerializer,ReviewSerializer,CartSerializer,CartItemSerializer,AddCartItemSerializer,UpdateCartItemSerializer,CustomerSerializer,OrderSerializer,CreateOrderSerializer
 from .permissions import IsAdminOrReadOnly,FullDjangoModelPermissions,ViewCustomerHistoryPermission
 
 #Class Based Views 
@@ -32,14 +32,21 @@ class ReviewViewSet(ModelViewSet):
         return {'product_id': self.kwargs['product_pk']}
 
 class OrderViewSet(ModelViewSet):
-    serializer_class = OrderSerializer
     permission_classes = [IsAuthenticated]
+    
+    def get_serializer_context(self):
+        return {'user_id':self.request.user.id}
+        
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return CreateOrderSerializer
+        return OrderSerializer
 
     def get_queryset(self):
         user = self.request.user
         if user.is_staff:
             return Order.objects.all()
-        (customer_id,created) = Customer.objects.get_or_create(user_id=user.id)
+        (customer_id,created) = Customer.objects.only('id').get_or_create(user_id=user.id)
         return Order.objects.filter(customer_id=customer_id)
     
 
