@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.db import transaction
-from .models import Product,Collection,Review,Cart,CartItem,Customer,Order,OrderItem
+from .models import Product,Collection,Review,Cart,CartItem,Customer,Order,OrderItem,ProductImage
 from .signals import order_created
 from decimal import Decimal
 
@@ -23,6 +23,15 @@ class CollectionSerializer(serializers.ModelSerializer):
     products_count = serializers.IntegerField(read_only=True)
     # id = serializers.IntegerField()
     # title = serializers.CharField(max_length=255)
+class ProductImageSerializer(serializers.ModelSerializer):
+
+    def create(self,validated_data):
+        product_id = self.context['product_id']
+        return ProductImage.objects.create(product_id=product_id,**validated_data)
+
+    class Meta:
+        model = ProductImage
+        fields = ['id','image']
 
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:

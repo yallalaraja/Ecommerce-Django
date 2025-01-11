@@ -12,10 +12,10 @@ from rest_framework.viewsets import ModelViewSet,GenericViewSet
 from rest_framework.decorators import api_view,action
 from rest_framework.filters import SearchFilter,OrderingFilter
 from rest_framework.response import Response
-from .models import Product,Collection,Review,Cart,CartItem,Customer,Order
+from .models import Product,Collection,Review,Cart,CartItem,Customer,Order,ProductImage
 from .filters import ProductFilter
 from .pagination import ProductPagination
-from .serializers import ProductSerializer,CollectionSerializer,ReviewSerializer,CartSerializer,CartItemSerializer,AddCartItemSerializer,UpdateCartItemSerializer,CustomerSerializer,OrderSerializer,CreateOrderSerializer,UpdateOrderSerializer
+from .serializers import ProductSerializer,CollectionSerializer,ReviewSerializer,CartSerializer,CartItemSerializer,AddCartItemSerializer,UpdateCartItemSerializer,CustomerSerializer,OrderSerializer,CreateOrderSerializer,UpdateOrderSerializer,ProductImageSerializer
 from .permissions import IsAdminOrReadOnly,FullDjangoModelPermissions,ViewCustomerHistoryPermission
 
 #Class Based Views 
@@ -141,6 +141,16 @@ class ProductViewSet(ModelViewSet):
     #     product.delete()
     #     return Response(status=status.HTTP_204_NO_CONTENT)
 
+class ProductImageViewSet(ModelViewSet):
+    serializer_class = ProductImageSerializer
+
+    def get_serializer_context(self):
+        return {'product_id':self.kwargs['product_pk']}
+
+    def get_queryset(self):
+        return ProductImage.objects.filter(product_id=self.kwargs['product_pk'])
+    
+    
 class CollectionViewSet(ModelViewSet):
     queryset = Collection.objects.annotate(products_count=Count('products'))
     serializer_class = CollectionSerializer
