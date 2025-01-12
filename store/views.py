@@ -116,11 +116,10 @@ class ProductViewSet(ModelViewSet):
     search_fields = ['title','description']
     ordering_fields = ['unit_price','last_update']
     permission_classes = [IsAdminOrReadOnly]
-
     pagination_class = ProductPagination
 
     def get_queryset(self):
-        queryset = Product.objects.all()
+        queryset = Product.objects.prefetch_related('images').all()
         collection_id = self.request.query_params.get('collection_id')
         if collection_id is not None:
             queryset = queryset.filter(collection_id=collection_id)

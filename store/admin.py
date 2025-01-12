@@ -53,6 +53,11 @@ class ProductAdmin(admin.ModelAdmin):
     actions = ['clearInventory']
     # inlines = [TagInline]
 
+    class Media:
+        css = {
+            'all':['store/styles.css']
+        }
+
     def collection_title(self,product):
         return product.collection.title
 
@@ -84,6 +89,15 @@ class OrderItemInline(admin.StackedInline):
     extra = 0
     min_num = 1
     max_num = 10
+
+class ProductImageInline(admin.TabularInline):
+    model = models.ProductImage
+    readonly_fields = ['thumbnail']
+
+    def thumbnail(self,instance):
+        if instance.image.name!='':
+            return format_html(f'<img src="{instance.image.url}" class=thumbnail />')
+        return ''
 
 @admin.register(models.Order)
 class OrderAdmin(admin.ModelAdmin):

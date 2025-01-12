@@ -34,9 +34,10 @@ class ProductImageSerializer(serializers.ModelSerializer):
         fields = ['id','image']
 
 class ProductSerializer(serializers.ModelSerializer):
+    images = ProductImageSerializer(many=True)
     class Meta:
         model = Product
-        fields = ['id','title','slug','description','unit_price','inventory','price_with_tax','collection']
+        fields = ['id','title','slug','description','unit_price','inventory','price_with_tax','collection','images']
     price_with_tax = serializers.SerializerMethodField(method_name='calc_tax_method')
     # collection = CollectionSerializer()
     # collection = serializers.HyperlinkedRelatedField(queryset=Collection.objects.all(),view_name='collection-detail')
