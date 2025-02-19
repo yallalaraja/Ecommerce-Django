@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os
 from pathlib import Path
 from datetime import timedelta
+from celery.schedules import timedelta as celerytime
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -79,7 +80,7 @@ ROOT_URLCONF = 'storefront.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -180,8 +181,8 @@ DJOSER = {
 
 AUTH_USER_MODEL = 'core.User'
 
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST =  'localhost'
 EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''
@@ -191,3 +192,13 @@ DEFAULT_FROM_EMAIL =  'from@rajabuy.com'
 ADMINS = [
     ('Raja','admin@rajabuy.com')
 ]
+
+CELERY_BROKER_URL = 'redis://localhost:6379/1'
+
+CELERY_BEAT_SCHEDULE = {
+    'notify_customers':{
+        'task':'playground.tasks.notify_customers',
+        'schedule':celerytime(seconds=5),
+        'args':['Hello! World']
+    }
+}

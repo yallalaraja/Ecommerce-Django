@@ -7,7 +7,7 @@ from rest_framework.generics import ListCreateAPIView,RetrieveUpdateDestroyAPIVi
 from rest_framework.mixins import ListModelMixin,CreateModelMixin,RetrieveModelMixin,DestroyModelMixin,UpdateModelMixin
 from rest_framework.views import APIView
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import IsAuthenticated,AllowAny,IsAdminUser,DjangoModelPermissions,DjangoModelPermissionsOrAnonReadOnly
+from rest_framework.permissions import IsAuthenticated,AllowAny,IsAdminUser,DjangoModelPermissions,DjangoModelPermissionsOrAnonReadOnly,IsAuthenticatedOrReadOnly
 from rest_framework.viewsets import ModelViewSet,GenericViewSet
 from rest_framework.decorators import api_view,action
 from rest_framework.filters import SearchFilter,OrderingFilter
@@ -153,6 +153,8 @@ class ProductImageViewSet(ModelViewSet):
 class CollectionViewSet(ModelViewSet):
     queryset = Collection.objects.annotate(products_count=Count('products'))
     serializer_class = CollectionSerializer
+    permission_classes = [IsAdminUser]
+    
     def get_serializer_context(self):
         return {'request':self.request}
 
