@@ -64,6 +64,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 if DEBUG:
@@ -149,7 +150,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR,'static')
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 
@@ -204,5 +207,34 @@ CELERY_BEAT_SCHEDULE = {
         'task':'playground.tasks.notify_customers',
         'schedule':celerytime(seconds=5),
         'args':['Hello! World']
+    }
+}
+
+LOGGING = {
+    'version':1,
+    'disable_existing_loggers':False,
+    'handlers':{
+        'console':{
+            'class':'logging.StreamHandler'
+        },
+        'file':{
+            'class':'logging.FileHandler',
+            'filename':'general.log',
+            'formatter':'verbose'
+        }
+    },
+
+    'loggers':{
+        '':{
+            'handlers':['console','file'],
+            'level':os.environ.get('DJANGO_LOG_LEVEL','INFO')
+        }
+    },
+
+    'formatters':{
+        'verbose':{
+            'format':"{asctime} ({levelname}) - {name} - {message}",
+            'style':'{'
+        },
     }
 }

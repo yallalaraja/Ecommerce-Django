@@ -1,4 +1,5 @@
 import requests
+import logging
 from django.shortcuts import render
 from django.core.cache import cache
 from django.core.mail import send_mail,mail_admins,BadHeaderError,EmailMessage
@@ -8,12 +9,24 @@ from rest_framework.views import APIView
 from templated_mail.mail import BaseEmailMessage
 from .tasks import notify_customers
 
+logger = logging.getLogger(__name__)
 class HelloView(APIView):
-    @method_decorator(cache_page(5*60))
     def get(self,request):
-        response = requests.get('https://httpbin.org/delay/2')
-        data = response.json()
-        return render(request,'hello.html',{'name':'raja'})
+        try:
+            logger.info('Calling httpbin')
+            response = requests.get('https://httpbin.org/delay/2')
+            logger.info('Received the response')
+            data = response.json()
+        except requests.ConnectionError:
+            logger.critical('httpbin is offline')
+        return render(request,'hello.html',{'name':'ramraj'})
+
+# class HelloView(APIView):
+#     @method_decorator(cache_page(5*60))
+#     def get(self,request):
+#         response = requests.get('https://httpbin.org/delay/2')
+#         data = response.json()
+#         return render(request,'hello.html',{'name':'raja'})
 
 # @cache_page(5*60)
 # def say_hello(request):
@@ -22,13 +35,13 @@ class HelloView(APIView):
 #     return render(request,'hello.html',{'name':'raja'})
 
 
-def say_hello(request):
-    key = 'httpbin_result'
-    if cache.get(key) is None:
-        response = requests.get('https://httpbin.org/delay/2')
-        data = response.json()
-        cache.set(key,data)
-    return render(request,'hello.html',{'name':cache.get(key)})
+# def say_hello(request):
+#     key = 'httpbin_result'
+#     if cache.get(key) is None:
+#         response = requests.get('https://httpbin.org/delay/2')
+#         data = response.json()
+#         cache.set(key,data)
+#     return render(request,'hello.html',{'name':cache.get(key)})
 
 
 # def say_hello(request):
