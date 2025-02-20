@@ -109,6 +109,7 @@ class CartItemViewSet(ModelViewSet):
 
 
 class ProductViewSet(ModelViewSet):
+    
     serializer_class = ProductSerializer
     filter_backends = [DjangoFilterBackend,SearchFilter,OrderingFilter]
     filterset_fields = ['collection_id']

@@ -28,8 +28,10 @@ urlpatterns = [
     path('auth/',include('djoser.urls.jwt')),
     path('playground/',include('playground.urls')),
     path('store/',include('store.urls')),
+    path('core/',include('core.urls')),
 ] + debug_toolbar_urls()
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
+    urlpatterns += [path('silk/', include('silk.urls', namespace='silk'))]
     
